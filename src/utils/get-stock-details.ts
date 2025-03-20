@@ -1,19 +1,18 @@
 import { GLOBAL_QUOTE_KEY, MONTHLY_PRICE_KEY } from "@/constants/api-request.constants";
-import { ONE_HOUR_IN_SECONDS } from "@/constants/time.constants";
 import { StockData, StockPriceDataMap } from "@/models";
+import { fetchAlphavantageApi } from "./fetch-alphavantage-api";
+import { AlphavantageApiFunctions } from "@/models";
 
 export const getStockDetails = async (symbol: string) => {
-  const apiKey = process.env.API_KEY;
+  const stockDataPromise = fetchAlphavantageApi({
+    function: AlphavantageApiFunctions.GLOBAL_QUOTE,
+    symbol,
+  });
 
-  const stockDataPromise = fetch(
-    `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`,
-    { next: { revalidate: ONE_HOUR_IN_SECONDS } }
-  );
-
-  const stockPriceMonthlyPromise = fetch(
-    `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${apiKey}`,
-    { next: { revalidate: ONE_HOUR_IN_SECONDS } }
-  );
+  const stockPriceMonthlyPromise = fetchAlphavantageApi({
+    function: AlphavantageApiFunctions.TIME_SERIES_MONTHLY,
+    symbol,
+  });
 
   const [stockDataResponse, stockPriceMonthlyResponse] = await Promise.all([
     stockDataPromise,

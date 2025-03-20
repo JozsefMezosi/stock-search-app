@@ -1,7 +1,8 @@
 import { NAME_KEY, SYMBOL_KEY } from "@/constants/api-response.constants";
 import { QUERY_PARAM } from "@/constants/api-request.constants";
-import { HTTP_STATUS_CODES } from "@/models";
+import { AlphavantageApiFunctions, HTTP_STATUS_CODES } from "@/models";
 import { type NextRequest, NextResponse } from "next/server";
+import { fetchAlphavantageApi } from "@/utils/fetch-alphavantage-api";
 
 type Stock = Record<string, string>;
 
@@ -16,9 +17,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const res = await fetch(
-      `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${query}&apikey=${process.env.API_KEY}`
-    );
+    const res = await fetchAlphavantageApi({
+      function: AlphavantageApiFunctions.SYMBOL_SEARCH,
+      keywords: query,
+    });
+
     const { bestMatches, ...restOfResponse } = await res.json();
 
     if (!bestMatches) {
