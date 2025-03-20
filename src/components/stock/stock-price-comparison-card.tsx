@@ -8,7 +8,7 @@ export const StockPriceComparisonCard: FunctionComponent<StockData> = (data) => 
   const low = parseFloat(data["04. low"]);
   const high = parseFloat(data["03. high"]);
   const current = parseFloat(data["05. price"]);
-  const percentage = ((current - low) / (high - low)) * 100;
+  const percentage = low === high ? 100 : ((current - low) / (high - low)) * 100;
 
   return (
     <div className="mt-6">
