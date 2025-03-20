@@ -15,33 +15,43 @@ interface SearchResultListStore {
   currentSearchResultItems: SearchResultItems | undefined;
   executeSearch: () => void;
   setQuery: (query: string) => void;
+  error: string | undefined;
 }
 
 export const useSearchResultListStore = create<SearchResultListStore>((set, get) => ({
   query: "",
+  error: undefined,
   isLoading: false,
   currentSearchResultItems: undefined,
   searchResultsCache: {},
   setQuery: (query) => set(() => ({ query })),
   executeSearch: async () => {
-    const { searchResultsCache, query } = get();
-    set(() => ({ isLoading: true }));
+    try {
+      const { searchResultsCache, query } = get();
+      set(() => ({ isLoading: true, error: undefined }));
 
-    if (!query.length) {
-      set(() => ({ currentSearchResultItems: undefined, isLoading: false }));
-      return;
-    }
+      if (!query.length) {
+        set(() => ({ currentSearchResultItems: undefined }));
+        return;
+      }
 
-    const cache = searchResultsCache[query];
-    const isCacheValid = cache && cache.ttl > new Date();
+      const cache = searchResultsCache[query];
+      const isCacheValid = cache && cache.ttl > new Date();
 
-    const items: SearchResultItems = isCacheValid ? cache.items : await getStocksForQuery(query);
+      const items: SearchResultItems = isCacheValid ? cache.items : await getStocksForQuery(query);
 
-    set(() => ({ currentSearchResultItems: items, isLoading: false }));
+      set(() => ({ currentSearchResultItems: items }));
 
-    if (!isCacheValid) {
-      const newCacheEntry: SearchResultsCacheEntry = { ttl: getSearchResultItemsCacheTtl(), items };
-      set(() => ({ searchResultsCache: { ...searchResultsCache, [query]: newCacheEntry } }));
+      if (!isCacheValid) {
+        const newCacheEntry: SearchResultsCacheEntry = { ttl: getSearchResultItemsCacheTtl(), items };
+        set(() => ({ searchResultsCache: { ...searchResultsCache, [query]: newCacheEntry } }));
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        set(() => ({ error: error.message }));
+      }
+    } finally {
+      set(() => ({ isLoading: false }));
     }
   },
 }));
