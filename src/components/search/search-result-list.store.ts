@@ -1,6 +1,6 @@
 import { SearchResultItems } from "@/models";
 import { getSearchResultItemsCacheTtl } from "@/utils";
-import { getStocksForQuery } from "@/utils/get-stocks-for-query";
+import { getStocksForQuery } from "@/utils";
 import { create } from "zustand";
 
 interface SearchResultsCacheEntry {

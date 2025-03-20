@@ -1,5 +1,5 @@
 import { StockPageContainer } from "@/components/stock/stock-page-conatiner";
-import { getStockDetails } from "@/utils/get-stock-details";
+import { getStockDetails } from "@/utils";
 
 interface StockPageParams {
   params: Promise<{ symbol: string }>;
