@@ -10,3 +10,13 @@ export interface StockData {
   "09. change": string;
   "10. change percent": string;
 }
+
+export interface StockPriceData {
+  "1. open": string;
+  "2. high": string;
+  "3. low": string;
+  "4. close": string;
+  "5. volume": string;
+}
+
+export type StockPriceDataMap = Record<string, StockPriceData>;
