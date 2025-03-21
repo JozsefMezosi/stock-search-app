@@ -1,12 +1,7 @@
-import { SearchResultItems } from "@/models";
+import { SearchResultItems, SearchResultsCacheEntry } from "@/models";
 import { getSearchResultItemsCacheTtl } from "@/utils";
 import { getStocksForQuery } from "@/utils";
 import { create } from "zustand";
-
-interface SearchResultsCacheEntry {
-  items: SearchResultItems;
-  ttl: Date;
-}
 
 interface SearchResultListStore {
   query: string;

@@ -1,10 +1,7 @@
-import { NAME_KEY, SYMBOL_KEY } from "@/constants/api-response.constants";
 import { QUERY_PARAM } from "@/constants/api-request.constants";
-import { AlphavantageApiFunctions, HTTP_STATUS_CODES } from "@/models";
+import { AlphavantageApiFunctions, HTTP_STATUS_CODES, StockSearchData } from "@/models";
 import { type NextRequest, NextResponse } from "next/server";
 import { fetchAlphavantageApi } from "@/utils/fetch-alphavantage-api";
-
-type Stock = Record<string, string>;
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const searchParams = request.nextUrl.searchParams;
@@ -22,14 +19,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       keywords: query,
     });
 
-    const { bestMatches, ...restOfResponse } = await res.json();
+    const { bestMatches, ...restOfResponse } = res;
 
     if (!bestMatches) {
       throw new Error(JSON.stringify(restOfResponse));
     }
 
     return NextResponse.json(
-      bestMatches.map((stock: Stock) => ({ name: stock[NAME_KEY], symbol: stock[SYMBOL_KEY] })),
+      bestMatches.map((stock: StockSearchData) => ({ name: stock["2. name"], symbol: stock["1. symbol"] })),
       { status: HTTP_STATUS_CODES.OK }
     );
   } catch (error) {

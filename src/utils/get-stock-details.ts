@@ -2,6 +2,7 @@ import { GLOBAL_QUOTE_KEY, MONTHLY_PRICE_KEY } from "@/constants/api-request.con
 import { StockData, StockPriceDataMap } from "@/models";
 import { fetchAlphavantageApi } from "./fetch-alphavantage-api";
 import { AlphavantageApiFunctions } from "@/models";
+import { getStockNameFromBestMatches } from "./get-stock-name-from-best-matches";
 
 export const getStockDetails = async (symbol: string) => {
   const stockDataPromise = fetchAlphavantageApi({
@@ -14,12 +15,21 @@ export const getStockDetails = async (symbol: string) => {
     symbol,
   });
 
-  const [stockDataResponse, stockPriceMonthlyResponse] = await Promise.all([
+  const stockSearchPromise = fetchAlphavantageApi({
+    function: AlphavantageApiFunctions.SYMBOL_SEARCH,
+    keywords: symbol,
+  });
+
+  const [stockDataResponse, stockPriceMonthlyResponse, stockSearchDataResponse] = await Promise.all([
     stockDataPromise,
     stockPriceMonthlyPromise,
+    stockSearchPromise,
   ]);
 
-  const stockData = (await stockDataResponse.json())[GLOBAL_QUOTE_KEY] as StockData;
-  const stockPriceMonthlyData = (await stockPriceMonthlyResponse.json())[MONTHLY_PRICE_KEY] as StockPriceDataMap;
-  return { stockData, stockPriceMonthlyData };
+  const stockData = stockDataResponse[GLOBAL_QUOTE_KEY] as StockData | undefined;
+  const stockPriceMonthlyData = stockPriceMonthlyResponse[MONTHLY_PRICE_KEY] as StockPriceDataMap | undefined;
+
+  const stockName = getStockNameFromBestMatches(stockSearchDataResponse.bestMatches, symbol);
+
+  return { stockData, stockPriceMonthlyData, stockName };
 };

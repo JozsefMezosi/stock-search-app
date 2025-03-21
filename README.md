@@ -13,6 +13,7 @@ The application is deployed to Vercel: https://stock-search-app-two.vercel.app, 
 - Node.js
 - pnpm
 - Api key for Alpha Vantage API
+- REDIS_URL
 
 ### Installation
 
@@ -75,7 +76,7 @@ pnpm lint
 
 - Detailed stock information is displayed on a separate page.
 - The stock details page includes:
-  - Stock symbol and price
+  - Stock symbol, name and price
   - A button to add/remove stock from favorites
   - Last updated date
   - Stock price card
@@ -93,3 +94,10 @@ pnpm lint
 
 - The app integrates with the Alpha Vantage API to fetch stock data.
 - The API key is stored in the `.env` file.
+- The REDIS_URL is store in the `.env` file.
+
+## Redis Caching
+
+- The app uses Redis for caching API responses to improve performance and reduce the number of API requests.
+- Cached results are stored for one hour.
+- The caching logic is implemented in the fetchAlphavantageApi function located in src/utils/fetch-alphavantage-api.ts.

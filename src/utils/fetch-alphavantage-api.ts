@@ -1,5 +1,7 @@
+"use server";
 import { ONE_HOUR_IN_SECONDS } from "@/constants/time.constants";
 import { type AlphavantageApiFunctions } from "@/models";
+import { createClient } from "redis";
 
 type FetchAlphavantageApiParams =
   | {
@@ -11,7 +13,9 @@ type FetchAlphavantageApiParams =
       symbol: string;
     };
 
-export const fetchAlphavantageApi = (params: FetchAlphavantageApiParams) => {
+const redis = await createClient({ url: process.env.REDIS_URL }).connect();
+
+export const fetchAlphavantageApi = async (params: FetchAlphavantageApiParams) => {
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
     throw new Error("Alphavantage api key missing!");
@@ -21,7 +25,21 @@ export const fetchAlphavantageApi = (params: FetchAlphavantageApiParams) => {
     .map(([key, value]) => `${key}=${value}`)
     .join("&");
 
-  return fetch(`https://www.alphavantage.co/query?${queryParams}&apikey=${apiKey}`, {
+  const cachedResult = await redis.get(queryParams);
+
+  if (cachedResult) {
+    return JSON.parse(cachedResult);
+  }
+
+  const promise = await fetch(`https://www.alphavantage.co/query?${queryParams}&apikey=${"demo"}`, {
+    cache: "force-cache",
     next: { revalidate: ONE_HOUR_IN_SECONDS },
   });
+
+  const data = await promise.json();
+  if (!data.hasOwnProperty("Information")) {
+    redis.set(queryParams, JSON.stringify(data), { EX: ONE_HOUR_IN_SECONDS });
+  }
+
+  return data;
 };
