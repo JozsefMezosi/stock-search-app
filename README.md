@@ -93,8 +93,7 @@ pnpm lint
 ## API Integration
 
 - The app integrates with the Alpha Vantage API to fetch stock data.
-- The API key is stored in the `.env` file.
-- The REDIS_URL is store in the `.env` file.
+- The API key, REDIS_URL is stored in the `.env` file.
 
 ## Redis Caching
 
