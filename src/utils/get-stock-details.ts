@@ -26,8 +26,8 @@ export const getStockDetails = async (symbol: string) => {
     stockSearchPromise,
   ]);
 
-  const stockData = stockDataResponse[GLOBAL_QUOTE_KEY] as StockData | undefined;
-  const stockPriceMonthlyData = stockPriceMonthlyResponse[MONTHLY_PRICE_KEY] as StockPriceDataMap | undefined;
+  const stockData: StockData | undefined = stockDataResponse[GLOBAL_QUOTE_KEY];
+  const stockPriceMonthlyData: StockPriceDataMap | undefined = stockPriceMonthlyResponse[MONTHLY_PRICE_KEY];
 
   const stockName = getStockNameFromBestMatches(stockSearchDataResponse.bestMatches, symbol);
 
