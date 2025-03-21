@@ -31,7 +31,7 @@ export const fetchAlphavantageApi = async (params: FetchAlphavantageApiParams) =
     return JSON.parse(cachedResult);
   }
 
-  const promise = await fetch(`https://www.alphavantage.co/query?${queryParams}&apikey=${"demo"}`, {
+  const promise = await fetch(`https://www.alphavantage.co/query?${queryParams}&apikey=${apiKey}`, {
     cache: "force-cache",
     next: { revalidate: ONE_HOUR_IN_SECONDS },
   });
