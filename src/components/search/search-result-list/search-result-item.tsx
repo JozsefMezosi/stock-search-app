@@ -1,7 +1,6 @@
 import { FavoriteButton } from "@/components/favorites/favorite-button";
+import { ViewStockDetailsButton } from "@/components/stock/view-stock-details-button";
 import { SearchResultItem } from "@/models";
-import { EyeIcon } from "@heroicons/react/16/solid";
-import Link from "next/link";
 import { FunctionComponent } from "react";
 
 export const SearchResultItemComponent: FunctionComponent<SearchResultItem> = ({ name, symbol }) => {
@@ -10,9 +9,7 @@ export const SearchResultItemComponent: FunctionComponent<SearchResultItem> = ({
       <p>{name}</p>
       <p>{symbol}</p>
       <div className="flex gap-2 justify-center items-center">
-        <Link href={`/stock/${symbol}`} className="underline flex gap-3 justify-center">
-          <EyeIcon className="size-6 text-gray-500" />
-        </Link>
+        <ViewStockDetailsButton stockSymbol={symbol} />
         <FavoriteButton stockSymbol={symbol} />
       </div>
     </div>
