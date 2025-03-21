@@ -1,7 +1,7 @@
 import { QUERY_PARAM } from "@/constants/api-request.constants";
 import { AlphavantageApiFunctions, HTTP_STATUS_CODES, StockSearchData } from "@/models";
 import { type NextRequest, NextResponse } from "next/server";
-import { fetchAlphavantageApi } from "@/utils/fetch-alphavantage-api";
+import { fetchAlphavantageApi } from "@/utils";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const searchParams = request.nextUrl.searchParams;
@@ -14,12 +14,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const res = await fetchAlphavantageApi({
+    const { bestMatches, ...restOfResponse } = await fetchAlphavantageApi({
       function: AlphavantageApiFunctions.SYMBOL_SEARCH,
       keywords: query,
     });
-
-    const { bestMatches, ...restOfResponse } = res;
 
     if (!bestMatches) {
       throw new Error(JSON.stringify(restOfResponse));
