@@ -22,6 +22,7 @@ export const fetchAlphavantageApi = async (params: FetchAlphavantageApiParams) =
   }
 
   const queryParams = Object.entries(params)
+    .sort(([key1], [key2]) => key1.localeCompare(key2))
     .map(([key, value]) => `${key}=${value}`)
     .join("&");
 
